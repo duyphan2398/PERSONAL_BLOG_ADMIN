@@ -9,7 +9,7 @@ export default {
   btn_edit: 'Edit',
   btn_delete: 'Delete',
   btn_cancel: 'Cancel',
-  confirm_delete_content: '本当に削除しますか。',
+  confirm_content: 'Are you sure ?',
   confirm_no: 'No',
   confirm_yes: 'Yes',
   tooltip_edit: 'edit',
@@ -27,7 +27,6 @@ export default {
   start_time: 'from',
   end_time: 'to',
   placeholder_prefecture: '選択してください',
-  update_message_successfully: '更新が完了しました。',
   upload_image: 'ファイル選択',
   required: 'required',
   ok: 'ok',
@@ -58,7 +57,8 @@ export default {
   label_search_title: 'Title',
   // column title
   column_post_thumbnail: 'Thumbnail',
-  column_post_duration: 'Duration',
+  column_post_updated_at: 'Updated At',
+  column_post_created_at: 'Created At',
   column_post_category: 'Category',
   column_post_title: 'Title',
   // form fields
@@ -75,11 +75,14 @@ export default {
   // form fields
   field_admin_name: 'Name',
   field_admin_login_password: 'Password',
-  field_admin_login_password_confirmation: 'Password confirm',
+  field_admin_login_password_confirmation: 'Password confirmation',
   field_admin_login_id: 'Login ID',
-  field_admin_change_password: 'Change password',
+  field_admin_change_password: 'Change password ?',
 
-  // Error
+  // Error & Message
+  message_success: 'Success',
+  update_message_successfully: 'Update successfully !',
+  reset_message_successfully: 'Reset done !',
   message_error: 'Something wrong !',
   error: 'Error',
   error_400_content: 'Have the errors with input 400',
@@ -92,8 +95,8 @@ export default {
   error_503_content: 'Please try again 503',
   error_title: 'Something wrong',
   take_me_home: 'Return home ',
-  select_option_active: 'a',
-  select_option_inactive: 'b',
+  select_option_active: 'Active',
+  select_option_inactive: 'Disable',
   select_option_pushed: 'c',
   select_option_push: 'd'
 }

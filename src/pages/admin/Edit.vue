@@ -7,16 +7,13 @@
 <script>
 import Form from './Form'
 import store from '@/store'
+import Admin from '@/models/Admin'
 export default {
   name: 'Edit',
+
   beforeRouteEnter: async (to, from, next) => {
-    console.log(store.getters.profile.data.id)
-    // const respDetail = await Admin.find(store.getters.profile.data.id)
-    const respDetail = {
-      name: 'duy_dev',
-      login_id: 'superadmin'
-    }
-    to.meta['detail'] = respDetail
+    const respDetail = await Admin.find(store.getters.profile ? store.getters.profile.data.id : localStorage.getItem('admin_id'))
+    to.meta['detail'] = JSON.parse(JSON.stringify(respDetail))
     return next()
   },
   components: {

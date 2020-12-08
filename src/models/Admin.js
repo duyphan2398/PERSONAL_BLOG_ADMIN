@@ -5,6 +5,10 @@ export default class Admin extends Model {
     return ['admins', ...params]
   }
 
+  static async update (id, data) {
+    return (new this()).request({ method: 'PUT', url: `admins/${id}`, data, isStatic: true })
+  }
+
   static async profile (configs = {}) {
     return (new this()).request({ method: 'GET', url: `auth/profile`, ...configs, isStatic: true })
   }

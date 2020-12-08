@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Notice from '@/models/Notice'
+import Post from '@/models/Post'
 import Form from './Form'
 
 export default {
@@ -19,7 +19,7 @@ export default {
     Form
   },
   beforeRouteEnter: async (to, from, next) => {
-    const news = await Notice.find(to.params['id'])
+    const news = await Post.find(to.params['id'])
     to.meta['detail'] = news.data
 
     return next()

@@ -11,13 +11,13 @@
                    class="col-md-6 mb-3"
                    rules="required|max:100"
                    vid="news_title"
-                   label="field_notice_title"
+                   label="field_post_title"
                    :required="true"/>
 
         <!--publish_datetime-->
         <InputDateRange v-model="dateRange"
                         class="col-md-6 mb-3"
-                        label="field_notice_duration"
+                        label="field_post_duration"
                         rules="required"
                         formatDate="YYYY-MM-DD HH:mm"
                         :required="true"/>
@@ -26,17 +26,17 @@
         <InputHtmlEditor v-model="form.text"
                          rules="required|max:10000"
                          vid="text"
-                         label="field_notice_text"
+                         label="field_post_text"
                          class="col-md-12 mb-3"
                          :required="true"/>
 
         <!--Thumbnail-->
         <ValidationProvider tag="div"
-                            :name="$t('field_notice_thumbnail')"
+                            :name="$t('field_post_thumbnail')"
                             class="mb-3"
                             rules=""
                             v-slot="{ errors }">
-          <label class="form-label">{{ $t('field_notice_thumbnail') }}</label>
+          <label class="form-label">{{ $t('field_post_thumbnail') }}</label>
 
           <div class="form-control-plaintext">
             <a-popconfirm
@@ -76,11 +76,10 @@
         </button>
 
         <button type="submit"
-                v-if="$route.params.id ? hasPermissionAction(PERMISSIONS.UPDATE_NOTICE) : hasPermissionAction(PERMISSIONS.CREATE_NOTICE)"
                 class="btn btn-success float-right mr-1"
                 :class="{'btn-loading disabled': isSubmit}">
           <a-icon type="save" class="mr-1"/>
-          {{this.$route.name === 'notice.edit' ? $t('btn_update') : $t('btn_save')}}
+          {{this.$route.name === 'post.edit' ? $t('btn_update') : $t('btn_save')}}
         </button>
       </div>
     </ValidationObserver>
@@ -89,7 +88,7 @@
 
 <script>
 import { XCircleIcon } from 'vue-feather-icons'
-import Notice from '@/models/Notice'
+import Post from '@/models/Post'
 import store from '@/store'
 import Form from '@/mixins/form.mixin'
 import InputText from '@/components/form/InputText'
@@ -142,7 +141,7 @@ export default {
   mixins: [Form],
 
   created () {
-    if ('id' in this.$route.params && this.$route.name === 'notice.edit') {
+    if ('id' in this.$route.params && this.$route.name === 'post.edit') {
       this.form = Object.assign(this.form, {
         ...this.$route.meta['detail']
       })
@@ -186,7 +185,7 @@ export default {
         }
       })
 
-      if (this.$route.name === 'notice.edit') {
+      if (this.$route.name === 'post.edit') {
         data.thumbnail = ''
         formData.append('thumbnail', this.fileUploads)
         formData.append('_method', 'PUT')
@@ -199,11 +198,11 @@ export default {
 
     async updateNews (id, data) {
       try {
-        await Notice.update(id, data)
+        await Post.update(id, data)
 
         await this.onSuccess(this.$t('message_success'), this.$t('create_message_successfully'))
 
-        this.$router.push({name: 'notice.index'}).catch(_ => {})
+        this.$router.push({name: 'post.index'}).catch(_ => {})
       } catch (err) {
         this.checkErrorsAPI(err)
         this.isSubmit = false
@@ -212,12 +211,12 @@ export default {
 
     async createNews (data) {
       try {
-        const resp = await Notice.create(data)
+        const resp = await Post.create(data)
 
         if (resp && Object.keys(resp).length) {
           await this.onSuccess(this.$t('message_success'), this.$t('create_message_successfully'))
 
-          this.$router.push({name: 'notice.index'}).catch(_ => {
+          this.$router.push({name: 'post.index'}).catch(_ => {
           })
         }
       } catch (err) {
@@ -239,7 +238,7 @@ export default {
     },
 
     onCancel () {
-      return this.$router.push({name: 'notice.index'})
+      return this.$router.push({name: 'post.index'})
     },
 
     onUploadImage (file) {

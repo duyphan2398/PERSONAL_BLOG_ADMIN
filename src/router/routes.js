@@ -16,7 +16,7 @@ export const routes = [
     beforeEnter: ResolveGuard([LoginGuard])
   },
 
-  // Notice
+  // Post
   {
     path: '/post',
     component: Resource,
@@ -49,10 +49,10 @@ export const routes = [
       {
         path: ':id/edit',
         name: 'post.edit',
-        component: page('notice/Edit.vue'),
+        component: page('post/Edit.vue'),
         beforeEnter: ResolveGuard([AuthGuard]),
         meta: {
-          title: 'page_notice_edit',
+          title: 'page_post_edit',
           breadcrumbs: [
             { title: 'page_post_list', name: 'post.index' },
             { title: 'page_post_edit', name: 'post.edit' }

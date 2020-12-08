@@ -2,10 +2,8 @@
   <a-card class="card-common">
     <div class="card-status-top bg-warning"></div>
     <!--Form-->
-    {{ form }}
     <ValidationObserver tag="form"
-                        ref="observer"
-                        @submit.prevent="validateBeforeSubmit()">
+                        ref="observer">
       <div class="row">
         <!--Admin name-->
         <InputText v-model="form.name"
@@ -18,11 +16,12 @@
         <!--Login ID-->
         <InputText v-model="form.login_id"
                    class="col-md-6 col-xs-12 mb-3"
-                   rules="required|alpha_dot|min:4|max:100"
+                   rules="required|alpha_num|min:4|max:100"
                    vid="login_id"
                    label="field_admin_login_id"
                    :required="true"/>
 
+        <!--Change password confirm ?-->
         <InputSwitch v-model="changePassword"
                      class="col-md-12 col-xs-12 mb-3"
                      @change="changePasswordAction"
@@ -32,14 +31,14 @@
           <!--Login password-->
           <InputText v-model="form.password"
                      class="col-md-6 col-xs-12 mb-3"
-                     rules="half_alphabet|min:6|max:100"
+                     rules="alpha_num|min:6|max:100"
                      type="password"
                      vid="password"
                      label="field_admin_login_password"/>
           <!--Login password confirm-->
           <InputText v-model="form.password_confirmation"
                      class="col-md-6 col-xs-12 mb-3"
-                     rules="confirmed:password"
+                     rules="required_if:password|confirmed:password"
                      type="password"
                      vid="password_confirmation"
                      label="field_admin_login_password_confirmation"/>
@@ -49,18 +48,25 @@
       <!-- Action Section Submit & Cancel -->
       <div class="card-footer fixed-bottom bg-light shadow">
         <button type="button"
-                class="btn btn-default float-right"
-                @click="onCancel">
-          <a-icon type="stop" class="mr-1"/>
-          <span>{{ $t('btn_cancel') }}</span>
+                class="btn btn-warning float-right"
+                :class="{'btn-loading disabled': isReset, 'disabled': isSubmit}"
+                @click="onRefresh">
+          <a-icon type="undo" class="mr-1"/>
+          <span>{{ $t('btn_reset') }}</span>
         </button>
 
-        <button type="submit"
-                class="btn btn-success float-right mr-1"
-                :class="{'btn-loading disabled': isSubmit}">
-          <a-icon type="save" class="mr-1"/>
-          {{this.$route.name === 'admin.edit' ? $t('btn_update') : $t('btn_save')}}
-        </button>
+        <a-popconfirm
+            :title="$t('confirm_content')"
+            :ok-text="$t('confirm_yes')"
+            :cancel-text="$t('confirm_no')"
+            @confirm.prevent="validateBeforeSubmit()">
+          <button type="submit"
+                  class="btn btn-success float-right mr-1"
+                  :class="{'btn-loading disabled': isSubmit, 'disabled': isReset}">
+            <a-icon type="save" class="mr-1"/>
+            {{ $t('btn_update') }}
+          </button>
+        </a-popconfirm>
       </div>
     </ValidationObserver>
   </a-card>
@@ -75,6 +81,7 @@ import InputText from '@/components/form/InputText'
 import InputSwitch from '@/components/form/InputSwitch'
 import {forEach, pickBy} from 'lodash-es'
 import store from '@/store'
+import * as types from '@/store/mutation-types'
 
 export default {
   name: 'Form',
@@ -95,20 +102,15 @@ export default {
         password: '',
         password_confirmation: ''
       },
-      isSubmit: false
+      isSubmit: false,
+      isReset: false
     }
   },
 
   mixins: [Form],
 
   created () {
-    this.detail = {...this.$route.meta['detail']}
-
-    if (this.$route.name === 'admin.edit') {
-      this.form = Object.assign(this.form, {
-        ...this.detail
-      })
-    }
+    this.form = Object.assign(this.form, this.$route.meta['detail'])
   },
 
   computed: {
@@ -133,24 +135,18 @@ export default {
     handleSubmit () {
       this.isSubmit = true
       let data = this.form
-
-      if (this.$route.name === 'admin.edit') {
-        this.updateAdmin(data)
-      } else {
-        this.createAdmin(data)
-      }
+      this.updateAdmin(data)
     },
 
     async updateAdmin (data) {
       try {
-        const resp = new Admin(data)
-        await resp.save()
-
+        await Admin.update(store.getters.profile ? store.getters.profile.data.id : localStorage.getItem('admin_id'), data)
+        const profile = await Admin.profile()
+        store.commit(types.SET_PROFILE, { profile })
         await this.onSuccess(this.$t('message_success'), this.$t('update_message_successfully'))
-
-        await this.$router.push({name: 'admin.index'}).catch(_ => {
-        })
+        this.isSubmit = false
       } catch (err) {
+        console.log(err)
         this.checkErrorsAPI(err)
         this.isSubmit = false
       }
@@ -167,8 +163,13 @@ export default {
       })
     },
 
-    onCancel () {
-      return this.$router.push({name: 'admin.index'})
+    async onRefresh () {
+      this.isReset = true
+      const respDetail = await Admin.profile()
+      this.form = Object.assign(this.form, respDetail)
+      this.form.password = this.form.password_confirmation = ''
+      await this.onSuccess(this.$t('message_success'), this.$t('reset_message_successfully'))
+      this.isReset = false
     }
   }
 }

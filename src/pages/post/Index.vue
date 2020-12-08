@@ -1,13 +1,13 @@
 <template>
   <div id="PostIndex">
     <div class="btn-create">
-      <router-link :to="{name: 'notice.create'}" class="btn btn-success" tag="button">
+      <router-link :to="{name: 'post.create'}" class="btn btn-success" tag="button">
         <PlusIcon size="18" class="mr-1"/>
         {{$t('btn_create')}}
       </router-link>
     </div>
 
-    <Search @filter-changed="onFilterChange($event)"/>
+    <Search  :categories="categories" @filter-changed="onFilterChange($event)"/>
 
     <a-table :columns="columns"
              :data-source="list"
@@ -17,28 +17,31 @@
                ...pagination,
                showSizeChanger: true,
                buildOptionText: buildOptionText,
-               pageSizeOptions: ['100', '50', '10'],
+               pageSizeOptions: ['30', '15', '5'],
                showTotal: showTotal
              }"
              :rowClassName="handleHighlight"
              @change="onPageChange">
 
+      <template slot="label" slot-scope="title">
+        {{ title | truncate('...', 20) }}
+      </template>
+
       <template slot="thumbnail" slot-scope="thumbnail">
         <img class="avatar avatar-lg img-thumbnail-list" :src="thumbnail | imageThumbnailObject" alt=""/>
       </template>
 
-      <template slot="duration" slot-scope="duration">
-        {{ duration.publish_start_datetime }} ~ {{ duration.publish_end_datetime}}
+      <template slot="categories" slot-scope="post">
+        <div class="tag-wrap" v-for="category in post.categories "  :key="category.id">
+          <template v-for=" (categoryEnum, index) in CATEGORY">
+            <span v-if="categoryEnum.name === category.name" :key="index"  class="badge mb-1" :style="{'background-color': categoryEnum.color}" > {{ category.display_name }} </span>
+          </template>
+        </div>
       </template>
-
       <!--Custom badge active-->
       <template slot="is_active" slot-scope="is_active">
         <span class="badge bg-green" v-if="is_active"> {{$t('active')}} </span>
         <span class="badge bg-gray" v-else> {{$t('inactive')}} </span>
-      </template>
-
-      <template slot="news_title" slot-scope="title">
-        {{ title }}
       </template>
 
       <!--Custom type table-->
@@ -50,9 +53,9 @@
             </button>
           </a-tooltip>
 
-          <a-tooltip placement="bottom" :title="$t('tooltip_delete')" v-if="hasPermissionAction(PERMISSIONS.DELETE_NOTICE)">
+          <a-tooltip placement="bottom" :title="$t('tooltip_delete')">
             <a-popconfirm
-                :title="$t('confirm_delete_content')"
+                :title="$t('confirm_content')"
                 :ok-text="$t('confirm_yes')"
                 :cancel-text="$t('confirm_no')"
                 @confirm="handleDelete(action.id)">
@@ -68,7 +71,8 @@
 </template>
 
 <script>
-import Notice from '@/models/Notice'
+import Post from '@/models/Post'
+import Category from '@/models/Category'
 import Form from '@/mixins/form.mixin'
 import Table from '@/mixins/table.mixin'
 import { convertPagination } from '@/utils/filters'
@@ -88,19 +92,24 @@ export default {
   },
 
   async beforeRouteEnter (to, from, next) {
-    // const resp = await Notice.paginate({
-    //   query: {
-    //     page: 1,
-    //     per_page: 100,
-    //     'sortBy[updated_at]': 'desc'
-    //   }
-    // })
+    const resp = await Post.paginate({
+      query: {
+        page: 1,
+        per_page: 5,
+        'sortBy[updated_at]': 'desc',
+        include: 'admin'
+      }
+    })
+    const categories = await Category.paginate({
+      query: {
+        per_page: 0
+      }
+    })
 
-    // to.meta['list'] = resp.data
-    // to.meta['pagination'] = convertPagination(resp.pagination)
+    to.meta['categories'] = categories.data
+    to.meta['list'] = resp.data
+    to.meta['pagination'] = convertPagination(resp.pagination)
 
-    to.meta['list'] = []
-    to.meta['pagination'] = []
     return next()
   },
 
@@ -110,6 +119,7 @@ export default {
       list: [],
       pagination: {},
       filter: {},
+      categories: [],
       perPage: ''
     }
   },
@@ -118,19 +128,27 @@ export default {
     columns () {
       return [
         {
-          title: this.$t('column_notice_thumbnail'),
-          dataIndex: 'thumbnail',
+          title: this.$t('column_post_thumbnail'),
+          dataIndex: 'file',
           scopedSlots: { customRender: 'thumbnail' },
-          width: 85
+          width: 120
         },
         {
-          title: this.$t('column_notice_duration'),
-          scopedSlots: { customRender: 'duration' },
-          width: 160
+          title: this.$t('column_post_title'),
+          dataIndex: 'title',
+          scopedSlots: { customRender: 'label' }
         },
         {
-          title: this.$t('column_notice_title'),
-          dataIndex: 'title'
+          title: this.$t('column_post_category'),
+          scopedSlots: { customRender: 'categories' }
+        },
+        {
+          title: this.$t('column_post_created_at'),
+          dataIndex: 'created_at'
+        },
+        {
+          title: this.$t('column_post_updated_at'),
+          dataIndex: 'updated_at'
         },
         {
           title: this.$t('status'),
@@ -150,6 +168,7 @@ export default {
   },
 
   created () {
+    this.categories = this.$route.meta['categories']
     this.list = this.$route.meta['list']
     this.pagination = this.$route.meta['pagination']
   },
@@ -168,7 +187,7 @@ export default {
     async onFilterChange ($event) {
       const params = {
         page: 1,
-        per_page: this.perPage || 100
+        per_page: this.perPage || 5
       }
 
       this.filter = {...$event}
@@ -185,7 +204,7 @@ export default {
       }
 
       try {
-        const resp = await Notice.paginate({
+        const resp = await Post.paginate({
           query: {
             'sortBy[updated_at]': 'desc',
             ...params,
@@ -207,7 +226,7 @@ export default {
 
     async handleEdit (id) {
       this.$router.push({
-        name: 'notice.edit',
+        name: 'post.edit',
         params: {
           id: id
         }
@@ -217,10 +236,10 @@ export default {
     async handleDelete (id) {
       const params = {
         page: 1,
-        per_page: this.perPage || 100
+        per_page: this.perPage || 5
       }
 
-      await Notice.delete(id)
+      await Post.delete(id)
 
       await this.fetchList(params)
     }

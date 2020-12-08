@@ -5,7 +5,7 @@
           tag="a"
           class="navbar-brand"
           :to="{name: 'admin.edit'}">
-        <img src="../assets/images/logo_tnguyen.png" style="max-width: 180px;">
+<!--        <img src="../assets/images/logo_tnguyen.png" style="max-width: 180px;">-->
       </router-link>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
               aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">

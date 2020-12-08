@@ -104,7 +104,7 @@ export default {
         store.commit(types.SET_TOKEN, resp.access_token)
         const profile = await Admin.profile()
         store.commit(types.SET_PROFILE, { profile })
-        console.log(profile.data.id)
+        localStorage.setItem('admin_id', profile.data.id)
         await this.$router.push({ name: 'admin.edit', params: { id: profile.data.id } })
       } catch (error) {
         this.isSubmit = false
