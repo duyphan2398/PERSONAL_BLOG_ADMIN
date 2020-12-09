@@ -7,7 +7,7 @@ export default class Post extends Model {
   }
 
   static async update (id, data) {
-    return (new this()).request({ method: 'PUT', url: `posts/${id}`, data, isStatic: true })
+    return (new this()).request({ method: 'POST', url: `posts/${id}`, data, isStatic: true })
   }
 
   static async delete (id) {

@@ -6,9 +6,22 @@
 
 <script>
 import Form from './Form'
+import Category from '@/models/Category'
 export default {
   name: 'Create',
-  components: { Form }
+  components: { Form },
+
+  async beforeRouteEnter (to, from, next) {
+    const categories = await Category.paginate({
+      query: {
+        per_page: 0
+      }
+    })
+
+    to.meta['categories'] = categories.data
+
+    return next()
+  }
 }
 </script>
 

@@ -53,7 +53,7 @@ export default {
   page_post_edit: 'Post Edit',
   // search label
   label_search_category: 'Category',
-  label_search_duration: 'Duration',
+  label_search_duration: 'Created At',
   label_search_title: 'Title',
   // column title
   column_post_thumbnail: 'Thumbnail',
@@ -64,10 +64,10 @@ export default {
   // form fields
   field_post_status: 'status',
   field_post_title: 'Title',
-  field_post_duration: 'Duration',
-  field_post_text: 'Text',
+  field_post_content: 'Content',
   field_post_thumbnail: 'Thumbnail',
-
+  field_post_category: 'Categories',
+  field_post_active: 'Active',
   // ADMIN
   // page title
   page_admin_edit: 'Edit Profile',
@@ -82,6 +82,7 @@ export default {
   // Error & Message
   message_success: 'Success',
   update_message_successfully: 'Update successfully !',
+  create_message_successfully: 'Create successfully !',
   reset_message_successfully: 'Reset done !',
   message_error: 'Something wrong !',
   error: 'Error',
@@ -98,5 +99,8 @@ export default {
   select_option_active: 'Active',
   select_option_inactive: 'Disable',
   select_option_pushed: 'c',
-  select_option_push: 'd'
+  select_option_push: 'd',
+
+  content: 'content',
+  html_editor: 'html_editor'
 }

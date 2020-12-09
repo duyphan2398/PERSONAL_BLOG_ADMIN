@@ -18,8 +18,6 @@
       <span class="error invalid-feedback" v-if="errors.length">{{ errors[0] }}</span>
     </div>
 
-    <ImageUpload @onUploadImage="onUploadImage" style="width: 150px" hidden ref="uploadImage"/>
-
     <template>
       <a-modal v-model="htmlVisible"
                id="files-popup"
@@ -55,7 +53,6 @@
 import {VueEditor} from 'vue2-editor'
 import SelectFile from '@/components/file/SelectFile'
 import ImageUpload from '@/components/file/ImageUpload'
-import Upload from '@/models/Upload'
 
 export default {
   name: 'InputHtmlEditor',
@@ -114,19 +111,9 @@ export default {
         [{'header': [false, 1, 2, 3, 4, 5, 6]}],
         [{'color': []}, {'background': []}],
         [{'align': []}],
-        ['custom-image-' + this._uid],
-        ['custom-html-' + this._uid],
-        ['clean']
+        ['link', 'image', 'video']
       ]
     }
-  },
-
-  mounted () {
-    const customButton = document.querySelector('.ql-custom-image-' + this._uid)
-    customButton.addEventListener('click', this.showSelectImage)
-
-    const htmlButton = document.querySelector('.ql-custom-html-' + this._uid)
-    htmlButton.addEventListener('click', this.showHtml)
   },
 
   computed: {
@@ -154,13 +141,6 @@ export default {
     handleOk () {
       this.editorValue = this.htmlContent
       this.htmlVisible = false
-    },
-    async onUploadImage (file) {
-      const form = new FormData()
-      form.append('image', file)
-      const data = await Upload.uploadImage(form)
-      const range = this.quill.selection.savedRange
-      this.quill.insertEmbed(range.index, 'image', data.link)
     }
   }
 

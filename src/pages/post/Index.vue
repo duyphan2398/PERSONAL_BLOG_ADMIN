@@ -6,7 +6,6 @@
         {{$t('btn_create')}}
       </router-link>
     </div>
-
     <Search  :categories="categories" @filter-changed="onFilterChange($event)"/>
 
     <a-table :columns="columns"
@@ -32,9 +31,9 @@
       </template>
 
       <template slot="categories" slot-scope="post">
-        <div class="tag-wrap" v-for="category in post.categories "  :key="category.id">
-          <template v-for=" (categoryEnum, index) in CATEGORY">
-            <span v-if="categoryEnum.name === category.name" :key="index"  class="badge mb-1" :style="{'background-color': categoryEnum.color}" > {{ category.display_name }} </span>
+        <div class="tag-wrap" v-for="categoryId in post.categories"  :key="categoryId">
+          <template v-for=" (categoryItem, index) in categories">
+            <span v-if="categoryItem.id === categoryId" :key="index"  class="badge mb-1" :style="{'background-color': categoryItem.color}" > {{ categoryItem.display_name }} </span>
           </template>
         </div>
       </template>

@@ -6,27 +6,27 @@
                         ref="observer"
                         @submit.prevent="validateBeforeSubmit">
       <div class="row">
-        <!--news_title-->
+          <!--title-->
         <InputText v-model="form.title"
                    class="col-md-6 mb-3"
-                   rules="required|max:100"
-                   vid="news_title"
+                   rules="required|max:1000"
+                   vid="title"
                    label="field_post_title"
                    :required="true"/>
+        <!--Category-->
+        <InputCategoryMulti v-model="form.categories"
+                            class="col-md-6 mb-3"
+                            vid="category"
+                            rules=""
+                            label="field_post_category"
+                            :required="true"
+                            :options="optionsCategory"/>
 
-        <!--publish_datetime-->
-        <InputDateRange v-model="dateRange"
-                        class="col-md-6 mb-3"
-                        label="field_post_duration"
-                        rules="required"
-                        formatDate="YYYY-MM-DD HH:mm"
-                        :required="true"/>
-
-        <!--News text-->
-        <InputHtmlEditor v-model="form.text"
-                         rules="required|max:10000"
-                         vid="text"
-                         label="field_post_text"
+        <!--content-->
+        <InputHtmlEditor v-model="form.content"
+                         rules="required"
+                         vid="content"
+                         label="field_post_content"
                          class="col-md-12 mb-3"
                          :required="true"/>
 
@@ -36,11 +36,12 @@
                             class="mb-3"
                             rules=""
                             v-slot="{ errors }">
+
           <label class="form-label">{{ $t('field_post_thumbnail') }}</label>
 
           <div class="form-control-plaintext">
             <a-popconfirm
-                :title="$t('confirm_delete_content')"
+                :title="$t('confirm_content')"
                 :ok-text="$t('confirm_yes')"
                 :cancel-text="$t('confirm_no')"
                 @confirm="deleteImage">
@@ -52,7 +53,7 @@
                  :src="imageShow"
                  alt=""
             />
-            <input :value="form.thumbnail" :class="{'is-invalid': errors.length }" hidden>
+            <input :value="form.file" :class="{'is-invalid': errors.length }" hidden>
             <!-- Selected image -->
             <ImageUpload @onUploadImage="onUploadImage" style="width: 150px"/>
             <span class="error invalid-feedback" v-if="errors.length">{{ errors[0] }}</span>
@@ -62,7 +63,7 @@
         <!--Is active-->
         <InputSwitch v-model="form.is_active"
                      class="col-md-1 mb-3"
-                     label="text_active"/>
+                     label="field_post_active"/>
 
       </div>
 
@@ -120,42 +121,45 @@ export default {
 
   data () {
     return {
-      dateRange: [],
       form: {
         title: '',
-        publish_start_datetime: '',
-        publish_end_datetime: '',
-        thumbnail: '',
-        text: '',
-        display_type: 'no',
-        is_active: true,
-        is_pushed: true,
-        is_preview: false
+        categories: [],
+        file: '',
+        content: '',
+        is_active: true
       },
       isSubmit: false,
       imageShow: '',
-      fileUploads: ''
+      fileUploads: '',
+      categories: []
     }
   },
 
   mixins: [Form],
 
   created () {
+    this.categories = [...this.$route.meta['categories']]
+
     if ('id' in this.$route.params && this.$route.name === 'post.edit') {
       this.form = Object.assign(this.form, {
         ...this.$route.meta['detail']
       })
-
-      this.dateRange = [this.form.publish_start_datetime, this.form.publish_end_datetime]
     }
 
-    this.imageShow = this.form.thumbnail || require('../../assets/images/dummy_image.png')
-    this.previewFile(this.imageShow, this.form.thumbnail)
+    this.imageShow = this.form.file || require('../../assets/images/dummy_image.png')
+    this.previewFile(this.imageShow, this.form.file)
   },
 
   computed: {
     currentUser () {
       return store.getters.profile.data
+    },
+    optionsCategory () {
+      return {
+        data: this.categories,
+        id: 'id',
+        key: 'display_name'
+      }
     }
   },
 
@@ -173,34 +177,29 @@ export default {
       let data = {...this.form}
       const formData = new FormData()
 
-      data.publish_start_datetime = this.dateRange[0]
-      data.publish_end_datetime = this.dateRange[1]
       data.is_active = +this.form.is_active
-      data.is_pushed = +this.form.is_pushed
-      data.is_preview = +this.form.is_preview
 
       forOwn(data, (value, key) => {
-        if (key !== 'thumbnail') {
-          formData.append(key, value)
+        if (key !== 'file') {
+          formData.append(key, Array.isArray(value) ? JSON.stringify(value) : value)
         }
       })
 
       if (this.$route.name === 'post.edit') {
-        data.thumbnail = ''
-        formData.append('thumbnail', this.fileUploads)
-        formData.append('_method', 'PUT')
-        this.updateNews(this.$route.params.id, formData)
+        formData.append('file', data.file ? this.fileUploads : '')
+        formData.append('_method', 'POST')
+        this.updatePost(this.$route.params.id, formData)
       } else {
-        formData.append('thumbnail', this.fileUploads)
-        this.createNews(formData)
+        formData.append('file', data.file ? this.fileUploads : '')
+        this.createPost(formData)
       }
     },
 
-    async updateNews (id, data) {
+    async updatePost (id, data) {
       try {
         await Post.update(id, data)
 
-        await this.onSuccess(this.$t('message_success'), this.$t('create_message_successfully'))
+        await this.onSuccess(this.$t('message_success'), this.$t('update_message_successfully'))
 
         this.$router.push({name: 'post.index'}).catch(_ => {})
       } catch (err) {
@@ -209,7 +208,7 @@ export default {
       }
     },
 
-    async createNews (data) {
+    async createPost (data) {
       try {
         const resp = await Post.create(data)
 
@@ -244,6 +243,7 @@ export default {
     onUploadImage (file) {
       this.imageShow = file.src
       this.fileUploads = file
+      this.form.file = file
     },
 
     async previewFile (url, banner, defaultType = 'image/png,image/jpg,image/jpeg') {
@@ -262,8 +262,8 @@ export default {
 
     deleteImage () {
       this.imageShow = require('../../assets/images/dummy_image.png')
-      this.form.thumbnail = ''
-      this.previewFile(this.imageShow, this.form.thumbnail)
+      this.form.file = ''
+      this.previewFile(this.imageShow, this.form.file)
     }
   }
 }

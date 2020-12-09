@@ -30,11 +30,11 @@
         </div>
 
         <!--Category-->
-        <InputCategory
-            v-model="filter.category_id"
-            class="col-12 col-md-6 mb-2"
-            label="label_search_category"
-            :options="optionsCategory"/>
+
+        <InputCategoryMulti v-model="filter.category_id"
+                            class="col-12 col-md-6 mb-2"
+                            label="label_search_category"
+                            :options="optionsCategory"/>
 
         <!--is_active-->
         <div class="col-12 col-md-6 mb-2">
@@ -83,7 +83,7 @@
 <script>
 import { RefreshCwIcon, SearchIcon } from 'vue-feather-icons'
 import locale from 'ant-design-vue/es/date-picker/locale/en_US'
-import InputCategory from '@/components/form/InputCategory'
+import InputCategoryMulti from '@/components/form/InputCategoryMulti'
 export default {
   name: 'Search',
   data () {
@@ -92,7 +92,7 @@ export default {
       dateRange: [],
       filter: {
         title: '',
-        category_id: '',
+        category_id: [],
         publish_start_datetime: '',
         publish_end_datetime: '',
         is_active: ''
@@ -111,7 +111,7 @@ export default {
   components: {
     SearchIcon,
     RefreshCwIcon,
-    InputCategory
+    InputCategoryMulti
   },
 
   computed: {

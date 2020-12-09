@@ -5,7 +5,7 @@ export default class Prefecture extends Model {
     return ['upload', ...params]
   }
 
-  static uploadImage (data) {
+  static uploadFile (data) {
     return (new this()).request({ method: 'POST', url: 'upload', data, isStatic: true })
   }
 }
