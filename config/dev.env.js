@@ -7,5 +7,9 @@ module.exports = merge(prodEnv, {
   API_ENDPOINT: '"https://www.api.tnguyenofficial.com"',
   USER_API_ENDPOINT: '"https://www.api.tnguyenofficial.com"',
   WEB_ENDPOINT: '"https://www.api.tnguyenofficial.com"',
+
+  // API_ENDPOINT: '"http://personal_blog_api.test"',
+  // USER_API_ENDPOINT: '"http://personal_blog_api.test"',
+  // WEB_ENDPOINT: '"http://personal_blog_api.test"',
   CLIENT_ENV: '"development"'
 })
