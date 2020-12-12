@@ -5,7 +5,7 @@ import router from '@/router'
 import Cookie from 'js-cookie'
 
 const instance = axios.create()
-instance.defaults.baseURL = 'https://www.api.tnguyenofficial.com'
+instance.defaults.baseURL = process.env.API_ENDPOINT
 instance.defaults.headers.common['Accept'] = 'application/json'
 instance.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
 

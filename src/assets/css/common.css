@@ -68,6 +68,7 @@ body {
     margin: 16px 20px !important;
 }
 
+
 .ant-calendar-input {
     pointer-events: none;
     opacity: .5;
@@ -89,6 +90,10 @@ body {
 
 .anticon svg {
     vertical-align: unset;
+}
+
+.ant-pagination-item-link .anticon svg {
+    margin-top: 9px;
 }
 
 .quill-editor .ql-container.ql-snow {

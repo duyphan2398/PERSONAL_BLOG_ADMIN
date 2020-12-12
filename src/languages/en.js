@@ -34,6 +34,7 @@ export default {
   // NAV
   nav_post: 'Post',
   nav_admin: 'Admin',
+  nav_category: 'Category',
   nav_logout: 'Logout',
 
   // LOGIN
@@ -68,6 +69,17 @@ export default {
   field_post_thumbnail: 'Thumbnail',
   field_post_category: 'Categories',
   field_post_active: 'Active',
+
+  // Category
+  // page title
+  page_category_list: 'Category List',
+  page_category_edit: 'Category Edit',
+  // column title
+  column_category_thumbnail: 'Thumbnail',
+  column_category_name: 'Updated At',
+  column_category_display_name: 'Display Name',
+  column_category_color: 'Category',
+
   // ADMIN
   // page title
   page_admin_edit: 'Edit Profile',

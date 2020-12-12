@@ -8,7 +8,7 @@ export default {
       if (this.$i18n.locale === LOCALE.ja) {
         return `${pageSize.value} / ページ`
       }
-      return `${pageSize.value} / page`
+      return `${pageSize.value} / Page`
     },
 
     showTotal (total, range) {

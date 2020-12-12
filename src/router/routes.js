@@ -62,6 +62,40 @@ export const routes = [
     ]
   },
 
+
+  // Category
+  {
+    path: '/category',
+    component: Resource,
+    children: [
+      {
+        path: '',
+        name: 'category.index',
+        component: page('category/Index.vue'),
+        beforeEnter: ResolveGuard([AuthGuard]),
+        meta: {
+          title: 'page_category_list',
+          breadcrumbs: [
+            { title: 'page_category_list', name: 'category.index' }
+          ]
+        }
+      },
+      {
+        path: ':id/edit',
+        name: 'category.edit',
+        component: page('category/Edit.vue'),
+        beforeEnter: ResolveGuard([AuthGuard]),
+        meta: {
+          title: 'page_category_edit',
+          breadcrumbs: [
+            { title: 'page_category_list', name: 'category.index' },
+            { title: 'page_category_edit', name: 'category.edit' }
+          ]
+        }
+      }
+    ]
+  },
+
   // Admin (HOME)
   {
     path: '',
