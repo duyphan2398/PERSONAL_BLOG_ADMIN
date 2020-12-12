@@ -62,7 +62,6 @@ export const routes = [
     ]
   },
 
-
   // Category
   {
     path: '/category',
