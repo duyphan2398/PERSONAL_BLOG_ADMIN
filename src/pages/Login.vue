@@ -79,8 +79,8 @@ export default {
       hidePassword: true,
       isSubmit: false,
       form: {
-        login_id: 'superadmin',
-        password: '123123123'
+        login_id: '',
+        password: ''
       },
       error: null
     }
