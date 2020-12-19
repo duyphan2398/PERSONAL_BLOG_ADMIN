@@ -76,9 +76,15 @@ export default {
   page_category_edit: 'Category Edit',
   // column title
   column_category_thumbnail: 'Thumbnail',
-  column_category_name: 'Updated At',
   column_category_display_name: 'Display Name',
   column_category_color: 'Category',
+  column_category_title: 'Tile',
+
+  // form fields
+  field_category_title: 'Title',
+  field_category_content: 'Content',
+  field_category_thumbnail: 'Thumbnail',
+  field_category_color: 'Color',
 
   // ADMIN
   // page title

@@ -7,6 +7,6 @@ export default class Category extends Model {
   }
 
   static async update (id, data) {
-    return (new this()).request({ method: 'PUT', url: `categories/${id}`, data, isStatic: true })
+    return (new this()).request({ method: 'POST', url: `categories/${id}`, data, isStatic: true })
   }
 }

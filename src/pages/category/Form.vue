@@ -6,39 +6,45 @@
                         ref="observer"
                         @submit.prevent="validateBeforeSubmit">
       <div class="row">
-          <!--title-->
-
+        <!--Title-->
         <InputText v-model="form.title"
                    class="col-md-6 mb-3"
-                   rules="required|max:1000"
+                   rules="max:100"
                    vid="title"
-                   label="field_post_title"
-                   :required="true"/>
-        <!--Category-->
-        <InputCategoryMulti v-model="form.categories"
-                            class="col-md-6 mb-3"
-                            vid="category"
-                            rules=""
-                            label="field_post_category"
-                            :required="true"
-                            :options="optionsCategory"/>
+                   label="field_category_title"
+        />
 
-        <!--content-->
-        <InputHtmlEditor v-model="form.content"
-                         rules="required"
-                         vid="content"
-                         label="field_post_content"
-                         class="col-md-12 mb-3"
-                         :required="true"/>
+        <!--Content-->
+        <InputText v-model="form.content"
+                       class="col-md-6 mb-3"
+                       rules="max:255"
+                       vid="content "
+                       label="field_category_content"
+        />
+
+        <div class="col-md-6 mb-3">
+          <div class="form__label">
+            <label>{{ $t('field_category_color')}}</label>
+          </div>
+          <div class="form__input">
+            <v-swatches
+                v-model="form.color"
+                class="h-50"
+                show-fallback
+
+                popover-x="left"
+            ></v-swatches>
+          </div>
+        </div>
 
         <!--Thumbnail-->
         <ValidationProvider tag="div"
-                            :name="$t('field_post_thumbnail')"
-                            class="mb-3"
+                            :name="$t('field_category_thumbnail')"
+                            class="col-md-6 mb-3"
                             rules=""
                             v-slot="{ errors }">
 
-          <label class="form-label">{{ $t('field_post_thumbnail') }}</label>
+          <label class="form-label">{{ $t('field_category_thumbnail') }}</label>
 
           <div class="form-control-plaintext">
             <a-popconfirm
@@ -61,11 +67,6 @@
           </div>
         </ValidationProvider>
 
-        <!--Is active-->
-        <InputSwitch v-model="form.is_active"
-                     class="col-md-1 mb-3"
-                     label="field_post_active"/>
-
       </div>
 
       <!-- Action Section Submit & Cancel -->
@@ -81,7 +82,7 @@
                 class="btn btn-success float-right mr-1"
                 :class="{'btn-loading disabled': isSubmit}">
           <a-icon type="save" class="mr-1"/>
-          {{this.$route.name === 'post.edit' ? $t('btn_update') : $t('btn_save')}}
+          {{this.$route.name === 'category.edit' ? $t('btn_update') : $t('btn_save')}}
         </button>
       </div>
     </ValidationObserver>
@@ -90,7 +91,6 @@
 
 <script>
 import { XCircleIcon } from 'vue-feather-icons'
-import Post from '@/models/Post'
 import store from '@/store'
 import Form from '@/mixins/form.mixin'
 import InputText from '@/components/form/InputText'
@@ -103,11 +103,14 @@ import { forEach, pickBy, forOwn } from 'lodash-es'
 import InputHtmlEditor from '@/components/form/InputHtmlEditor'
 import SelectFile from '@/components/file/SelectFile'
 import ImageUpload from '@/components/file/ImageUpload'
-
+import Category from '@/models/Category'
+import VSwatches from 'vue-swatches'
+import 'vue-swatches/dist/vue-swatches.css'
 export default {
   name: 'Form',
 
   components: {
+    VSwatches,
     ImageUpload,
     SelectFile,
     InputHtmlEditor,
@@ -124,10 +127,9 @@ export default {
     return {
       form: {
         title: '',
-        categories: [],
+        color: '#000000',
         file: '',
-        content: '',
-        is_active: true
+        content: ''
       },
       isSubmit: false,
       imageShow: '',
@@ -139,9 +141,7 @@ export default {
   mixins: [Form],
 
   created () {
-    this.categories = [...this.$route.meta['categories']]
-
-    if ('id' in this.$route.params && this.$route.name === 'post.edit') {
+    if ('id' in this.$route.params && this.$route.name === 'category.edit') {
       this.form = Object.assign(this.form, {
         ...this.$route.meta['detail']
       })
@@ -154,13 +154,6 @@ export default {
   computed: {
     currentUser () {
       return store.getters.profile.data
-    },
-    optionsCategory () {
-      return {
-        data: this.categories,
-        id: 'id',
-        key: 'display_name'
-      }
     }
   },
 
@@ -186,43 +179,25 @@ export default {
         }
       })
 
-      if (this.$route.name === 'post.edit') {
+      if (this.$route.name === 'category.edit') {
         formData.append('file', this.fileUploads)
         formData.append('_method', 'POST')
-        this.updatePost(this.$route.params.id, formData)
+        this.updateCategory(this.$route.params.id, formData)
       } else {
-        formData.append('file', this.fileUploads)
-        this.createPost(formData)
+        this.isSubmit = false
       }
     },
 
-    async updatePost (id, data) {
+    async updateCategory (id, data) {
       try {
-        await Post.update(id, data)
+        await Category.update(id, data)
 
         await this.onSuccess(this.$t('message_success'), this.$t('update_message_successfully'))
 
-        this.$router.push({name: 'post.index'}).catch(_ => {})
+        this.$router.push({name: 'category.index'}).catch(_ => {})
       } catch (err) {
         this.checkErrorsAPI(err)
         this.isSubmit = false
-      }
-    },
-
-    async createPost (data) {
-      try {
-        const resp = await Post.create(data)
-
-        if (resp && Object.keys(resp).length) {
-          await this.onSuccess(this.$t('message_success'), this.$t('create_message_successfully'))
-
-          this.$router.push({name: 'post.index'}).catch(_ => {
-          })
-        }
-      } catch (err) {
-        this.checkErrorsAPI(err)
-        this.isSubmit = false
-        throw err
       }
     },
 
@@ -238,7 +213,7 @@ export default {
     },
 
     onCancel () {
-      return this.$router.push({name: 'post.index'})
+      return this.$router.push({name: 'category.index'})
     },
 
     onUploadImage (file) {
@@ -287,5 +262,49 @@ export default {
   }
   .form-control-plaintext {
     max-width: 150px;
+  }
+  .theme-color {
+    .item {
+      width: calc(100%/3);
+      border-right: 1px solid #DDDDDD;
+      &:last-child {
+        border-right: none;
+      }
+      &__head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        line-height: 1;
+        padding: 1.25rem;
+        border-bottom: 1px solid #DDDDDD;
+        p {
+          line-height: 20px;
+        }
+        /deep/ .vue-swatches {
+          max-width: 80px;
+          max-height: 50px;
+          width: 100%;
+          height: 50px;
+          &__trigger__wrapper {
+            width: 100%;
+            height: 100%;
+            .vue-swatches__trigger {
+              width: 100%!important;
+              height: 100%!important;
+            }
+          }
+        }
+      }
+      &__body {
+        line-height: 1;
+        padding: 1.25rem;
+        /deep/ .vue-swatches {
+          &__trigger {
+            width: 50px!important;
+            height: 50px!important;
+          }
+        }
+      }
+    }
   }
 </style>
