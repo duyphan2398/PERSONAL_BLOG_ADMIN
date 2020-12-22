@@ -64,8 +64,11 @@ export default {
   column_post_title: 'Title',
   // form fields
   field_post_status: 'status',
+  field_post_slug: 'Slug',
   field_post_title: 'Title',
+  field_post_short_title: 'Short Title',
   field_post_content: 'Content',
+  field_post_short_content: 'Short Content',
   field_post_thumbnail: 'Thumbnail',
   field_post_category: 'Categories',
   field_post_active: 'Active',

@@ -6,19 +6,32 @@
                         ref="observer"
                         @submit.prevent="validateBeforeSubmit">
       <div class="row">
-          <!--title-->
-
+        <!--title-->
         <InputText v-model="form.title"
                    class="col-md-6 mb-3"
-                   rules="required|max:1000"
+                   rules="required|max:100000"
                    vid="title"
                    label="field_post_title"
+                   :required="true"/>
+
+        <InputText v-model="form.short_title"
+                   class="col-md-6 mb-3"
+                   rules="required|max:200"
+                   vid="short_title"
+                   label="field_post_short_title"
+                   :required="true"/>
+
+        <InputText v-model="form.short_content"
+                   class="col-md-6 mb-3"
+                   rules="required|max:500"
+                   vid="short_content"
+                   label="field_post_short_content"
                    :required="true"/>
         <!--Category-->
         <InputCategoryMulti v-model="form.categories"
                             class="col-md-6 mb-3"
                             vid="category"
-                            rules=""
+                            rules="required"
                             label="field_post_category"
                             :required="true"
                             :options="optionsCategory"/>
@@ -30,6 +43,13 @@
                          label="field_post_content"
                          class="col-md-12 mb-3"
                          :required="true"/>
+        <InputText v-model="form.slug"
+                   class="col-md-12 mb-3"
+                   rules=""
+                   vid="title"
+                   :disabled-input="true"
+                   label="field_post_slug"
+                   :required="true"/>
 
         <!--Thumbnail-->
         <ValidationProvider tag="div"
@@ -123,10 +143,13 @@ export default {
   data () {
     return {
       form: {
+        slug: '',
         title: '',
+        short_title: '',
         categories: [],
         file: '',
         content: '',
+        short_content: '',
         is_active: true
       },
       isSubmit: false,
