@@ -56,13 +56,13 @@
                    vid="slug"
                    :disabled-input="!form.custom_slug"
                    label="field_post_slug"
-                   :required="true"/>
+                   :required="false"/>
 
         <!--Thumbnail-->
         <ValidationProvider tag="div"
                             :name="$t('field_post_thumbnail')"
                             class="mb-3"
-                            rules=""
+                            rules="file"
                             v-slot="{ errors }">
 
           <label class="form-label">{{ $t('field_post_thumbnail') }}</label>
@@ -211,6 +211,7 @@ export default {
       const formData = new FormData()
 
       data.is_active = +this.form.is_active
+      data.custom_slug = +this.form.custom_slug
 
       forOwn(data, (value, key) => {
         if (key !== 'file') {
