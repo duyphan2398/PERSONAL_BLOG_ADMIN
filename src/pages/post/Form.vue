@@ -16,14 +16,14 @@
 
         <InputText v-model="form.short_title"
                    class="col-md-6 mb-3"
-                   rules="required|max:200"
+                   rules="required|max:88"
                    vid="short_title"
                    label="field_post_short_title"
                    :required="true"/>
 
         <InputText v-model="form.short_content"
                    class="col-md-6 mb-3"
-                   rules="required|max:500"
+                   rules="required|max:200"
                    vid="short_content"
                    label="field_post_short_content"
                    :required="true"/>
