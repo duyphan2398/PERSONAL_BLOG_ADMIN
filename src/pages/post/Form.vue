@@ -43,11 +43,18 @@
                          label="field_post_content"
                          class="col-md-12 mb-3"
                          :required="true"/>
+
+        <!--Is active-->
+        <InputSwitch v-model="form.custom_slug"
+                     class="col-md-1 mb-3"
+                     vid="custom_slug"
+                     label="field_post_custom_slug"/>
+
         <InputText v-model="form.slug"
                    class="col-md-12 mb-3"
-                   rules=""
-                   vid="title"
-                   :disabled-input="true"
+                   rules="required_if:custom_slug"
+                   vid="slug"
+                   :disabled-input="!form.custom_slug"
                    label="field_post_slug"
                    :required="true"/>
 
@@ -84,6 +91,7 @@
         <!--Is active-->
         <InputSwitch v-model="form.is_active"
                      class="col-md-1 mb-3"
+                     vid="is_active"
                      label="field_post_active"/>
 
       </div>
@@ -144,6 +152,7 @@ export default {
     return {
       form: {
         slug: '',
+        custom_slug: false,
         title: '',
         short_title: '',
         categories: [],

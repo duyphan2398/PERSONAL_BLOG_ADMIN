@@ -65,6 +65,7 @@ export default {
   // form fields
   field_post_status: 'status',
   field_post_slug: 'Slug',
+  field_post_custom_slug: 'Custom Slug',
   field_post_title: 'Title',
   field_post_short_title: 'Short Title',
   field_post_content: 'Content',
