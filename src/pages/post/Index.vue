@@ -101,7 +101,8 @@ export default {
     })
     const categories = await Category.paginate({
       query: {
-        per_page: 0
+        per_page: 0,
+        'filters[withoutCategoryName]': ['home', 'contact']
       }
     })
 
