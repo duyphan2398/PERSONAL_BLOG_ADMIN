@@ -62,7 +62,7 @@
         <ValidationProvider tag="div"
                             :name="$t('field_post_thumbnail')"
                             class="mb-3"
-                            rules="file"
+                            rules=""
                             v-slot="{ errors }">
 
           <label class="form-label">{{ $t('field_post_thumbnail') }}</label>
