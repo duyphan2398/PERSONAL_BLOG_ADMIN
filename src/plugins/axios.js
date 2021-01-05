@@ -16,6 +16,7 @@ instance.interceptors.request.use(
   (config) => {
     if (Cookie.get('token')) {
       config.headers['Authorization'] = `Bearer ${Cookie.get('token')}`
+      config.headers['Content-Type'] = 'multipart/form-data'
     }
     return config
   }
