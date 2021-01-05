@@ -8,7 +8,9 @@ const instance = axios.create()
 instance.defaults.baseURL = process.env.API_ENDPOINT
 instance.defaults.headers.common['Accept'] = 'application/json'
 instance.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
-
+instance.defaults.headers.common['Access-Control-Allow-Origin'] = '*'
+instance.defaults.headers.common['Access-Control-Allow-Methods'] = '*'
+instance.defaults.headers.common['Access-Control-Allow-Headers'] = '*'
 // Interceptors
 instance.interceptors.request.use(
   (config) => {
